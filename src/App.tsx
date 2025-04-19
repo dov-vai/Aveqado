@@ -1,35 +1,20 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
 import './App.css'
+import {useState} from "react";
+import EqGraph from "./components/EQGraph/EqGraph.tsx";
+import {Filter} from "./components/EQGraph/filter.ts";
 
 function App() {
-  const [count, setCount] = useState(0)
+    const [filters, setFilters] = useState<Filter[]>([
+        {type: 'peak', frequency: 50, Q: 2, gain: 5},
+        {type: 'peak', frequency: 1000, Q: 1, gain: -1},
+        {type: 'peak', frequency: 5000, Q: 5, gain: 3}
+    ]);
 
-  return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    return (
+        <>
+            <EqGraph filters={filters}/>
+        </>
+    )
 }
 
 export default App
