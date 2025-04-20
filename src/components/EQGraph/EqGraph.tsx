@@ -18,7 +18,7 @@ function EqGraph({
                      width = 1280,
                      height = 800,
                      minFreq = 20,
-                     maxFreq = 20000,
+                     maxFreq = 20480,
                      minDb = -12,
                      maxDb = 12
                  }: EQGraphProps) {
