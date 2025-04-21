@@ -94,14 +94,14 @@ function EqSelection() {
                     const centerFreq = getRegionCenterFreq(freq, nextFreq);
 
                     const posFilter: Filter = {
-                        type: 'peak',
+                        type: 'peaking',
                         frequency: centerFreq,
                         Q: 4,
                         gain: 2
                     };
 
                     const negFilter: Filter = {
-                        type: 'peak',
+                        type: 'peaking',
                         frequency: centerFreq,
                         Q: 4,
                         gain: -2

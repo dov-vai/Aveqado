@@ -1,7 +1,5 @@
-export type FilterType = 'peak';
-
 export interface Filter {
-    type: FilterType;
+    type: BiquadFilterType;
     frequency: number;
     Q: number;
     gain: number;

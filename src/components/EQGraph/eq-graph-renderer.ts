@@ -65,7 +65,7 @@ export class EqGraphRenderer {
         let totalGainDb = 0;
 
         this.filters.forEach((filter: Filter) => {
-            if (filter.type === 'peak') {
+            if (filter.type === 'peaking') {
                 const f0 = filter.frequency;
                 const Q = filter.Q;
                 const gainDb = filter.gain;
