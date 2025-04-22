@@ -3,14 +3,18 @@ import {Filter} from "../EQGraph/filter.ts";
 import EqGraph from "../EQGraph/EqGraph.tsx";
 import './EqSelection.css';
 
-function EqSelection() {
-    const [filters, setFilters] = useState<Filter[]>([]);
-    const [hoveredFilter, setHoveredFilter] = useState<Filter>();
+interface EqSelectionProps {
+    width: number;
+    height: number;
+    minFreq: number;
+    maxFreq: number;
+    appliedFilter: Filter;
+    filters: Filter[];
+    setFilters: React.Dispatch<React.SetStateAction<Filter[]>>;
+}
 
-    const width = 1280;
-    const height = 800;
-    const minFreq = 20;
-    const maxFreq = 20480;
+function EqSelection({width, height, minFreq, maxFreq, appliedFilter, filters, setFilters}: EqSelectionProps) {
+    const [hoveredFilter, setHoveredFilter] = useState<Filter>();
 
     const frequencies: number[] = [];
     for (let freq = minFreq; freq <= maxFreq; freq *= 2) {
@@ -94,17 +98,14 @@ function EqSelection() {
                     const centerFreq = getRegionCenterFreq(freq, nextFreq);
 
                     const posFilter: Filter = {
-                        type: 'peaking',
+                        ...appliedFilter,
                         frequency: centerFreq,
-                        Q: 4,
-                        gain: 2
+                        gain: Math.abs(appliedFilter.gain)
                     };
-
                     const negFilter: Filter = {
-                        type: 'peaking',
+                        ...appliedFilter,
                         frequency: centerFreq,
-                        Q: 4,
-                        gain: -2
+                        gain: -Math.abs(appliedFilter.gain)
                     };
 
                     return (
