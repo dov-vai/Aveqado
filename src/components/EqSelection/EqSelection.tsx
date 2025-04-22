@@ -55,7 +55,7 @@ function EqSelection({width, height, minFreq, maxFreq, appliedFilter, filters, s
             return;
         }
 
-        e.currentTarget.style.backgroundColor = 'rgba(33, 150, 243, 0.1)';
+        e.currentTarget.style.backgroundColor = 'rgba(167, 243, 208, 0.1)';
         setFilters([...filters, filter]);
     };
 
@@ -66,7 +66,7 @@ function EqSelection({width, height, minFreq, maxFreq, appliedFilter, filters, s
             return;
         }
 
-        e.currentTarget.style.backgroundColor = 'rgba(33, 150, 243, 0.1)';
+        e.currentTarget.style.backgroundColor = 'rgba(167, 243, 208, 0.1)';
         setHoveredFilter(filter);
     };
 

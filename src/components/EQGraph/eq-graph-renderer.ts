@@ -1,4 +1,5 @@
 import {Filter} from "./filter.ts";
+import {ThemeColors} from "../../utils/theme-colors.ts";
 
 export class EqGraphRenderer {
     private canvas: HTMLCanvasElement;
@@ -92,7 +93,7 @@ export class EqGraphRenderer {
     }
 
     private drawFrequencyGrid(): void {
-        this.ctx.strokeStyle = '#ddd';
+        this.ctx.strokeStyle = ThemeColors.LineColor;
         this.ctx.lineWidth = 0.5;
 
         // frequency grid lines (octaves)
@@ -104,7 +105,7 @@ export class EqGraphRenderer {
             this.ctx.stroke();
 
             // label
-            this.ctx.fillStyle = '#888';
+            this.ctx.fillStyle = ThemeColors.TextColor;
             this.ctx.font = '10px Arial';
             this.ctx.textAlign = 'center';
             const label: string = freq >= 1000 ? `${freq / 1000}k` : `${freq}`;
@@ -113,7 +114,7 @@ export class EqGraphRenderer {
     }
 
     private drawDbGrid(): void {
-        this.ctx.strokeStyle = '#ddd';
+        this.ctx.strokeStyle = ThemeColors.LineColor;
         this.ctx.lineWidth = 0.5;
 
         // dB grid lines
@@ -125,7 +126,7 @@ export class EqGraphRenderer {
             this.ctx.stroke();
 
             // label
-            this.ctx.fillStyle = '#888';
+            this.ctx.fillStyle = ThemeColors.TextColor;
             this.ctx.font = '10px Arial';
             this.ctx.textAlign = 'right';
             this.ctx.fillText(`${db}dB`, 25, y + 3);
@@ -133,7 +134,7 @@ export class EqGraphRenderer {
 
         // draw 0db line
         const zeroDbY: number = this.dbToY(0);
-        this.ctx.strokeStyle = '#aaa';
+        this.ctx.strokeStyle = ThemeColors.LineColor;
         this.ctx.lineWidth = 1;
         this.ctx.beginPath();
         this.ctx.moveTo(0, zeroDbY);
@@ -142,8 +143,8 @@ export class EqGraphRenderer {
     }
 
     private drawResponseCurve(): void {
-        this.ctx.strokeStyle = '#2196F3';
-        this.ctx.lineWidth = 2;
+        this.ctx.strokeStyle = ThemeColors.AccentColor;
+        this.ctx.lineWidth = 4;
         this.ctx.beginPath();
 
         for (let x = 0; x < this.width; x++) {

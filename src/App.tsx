@@ -1,14 +1,16 @@
 import './App.css'
 import EqSelection from "./components/EqSelection/EqSelection.tsx";
 import AudioPlayer from "./components/AudioPlayer/AudioPlayer.tsx";
-import {useState} from "react";
+import {useEffect, useRef, useState} from "react";
 import {Filter} from "./components/EQGraph/filter.ts";
 import AudioFileSelector from "./components/AudioPlayer/AudioFileSelector.tsx";
 import {FilterGenerator} from "./utils/filter-generator.ts";
+import {ArrowBigRight, X} from "lucide-react";
 
 function App() {
-    const width = 1280;
-    const height = 800;
+    const [width, setWidth] = useState(1280);
+    const [height, setHeight] = useState(800);
+    const canvasRef = useRef<HTMLDivElement | null>(null);
     const minFreq = 20;
     const maxFreq = 20480;
     const freqMultiplier = 2;
@@ -26,6 +28,10 @@ function App() {
     };
 
     const handleSubmit = () => {
+        if (filters.length < 1) {
+            return;
+        }
+
         if (filters[0].frequency === filter.frequency) {
             alert("yes");
         } else {
@@ -37,18 +43,40 @@ function App() {
         setFilters([]);
     };
 
+    useEffect(() => {
+        const width = canvasRef.current!.clientWidth;
+        const height = canvasRef.current!.clientHeight;
+        setWidth(width);
+        setHeight(height);
+    }, []);
+
     return (
         <>
-            <EqSelection width={width}
-                         height={height}
-                         minFreq={minFreq}
-                         maxFreq={maxFreq}
-                         appliedFilter={filter}
-                         filters={filters}
-                         setFilters={setFilters}/>
-            <AudioPlayer audioFile={audioFile} filter={filter}/>
-            <AudioFileSelector onFileSelected={handleFileSelected}/>
-            <button onClick={() => handleSubmit()} disabled={filters.length < 1}>Submit</button>
+            <div className="container">
+                <div className="canvas-area" ref={canvasRef}>
+                    <EqSelection width={width}
+                                 height={height}
+                                 minFreq={minFreq}
+                                 maxFreq={maxFreq}
+                                 appliedFilter={filter}
+                                 filters={filters}
+                                 setFilters={setFilters}/>
+                </div>
+                <div className="sidebar">
+                    <div className="card">
+                        <div className="round-button"
+                             onClick={() => handleSubmit()}>
+                            {filters.length < 1 ? <X/> : <ArrowBigRight/>}
+                        </div>
+                    </div>
+                    <div className="card">
+                        <AudioPlayer audioFile={audioFile} filter={filter}/>
+                    </div>
+                    <div className="card">
+                        <AudioFileSelector onFileSelected={handleFileSelected}/>
+                    </div>
+                </div>
+            </div>
         </>
     )
 }

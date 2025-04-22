@@ -1,6 +1,7 @@
 import {useEffect, useRef, useState} from 'react';
 import {Filter} from "../EQGraph/filter.ts";
 import './AudioPlayer.css';
+import {Pause, PenOff, Play, WandSparkles} from "lucide-react";
 
 interface AudioPlayerProps {
     audioFile?: File;
@@ -64,6 +65,10 @@ function AudioPlayer({audioFile, filter}: AudioPlayerProps) {
     }, [filter]);
 
     const togglePlayPause = () => {
+        if (!audioFile) {
+            return;
+        }
+
         if (!audioElementRef.current) {
             return;
         }
@@ -78,6 +83,10 @@ function AudioPlayer({audioFile, filter}: AudioPlayerProps) {
     };
 
     const toggleFilter = () => {
+        if (!filter || !audioFile) {
+            return;
+        }
+
         if (!filterNodeRef.current ||
             !sourceNodeRef.current ||
             !filterNodeRef.current ||
@@ -140,33 +149,36 @@ function AudioPlayer({audioFile, filter}: AudioPlayerProps) {
                    onTimeUpdate={handleTimeUpdate}
                    onLoadedMetadata={handleLoadedMetadata}
                    onEnded={() => setIsPlaying(false)}/>
+
+            <div className="seek-bar-container">
+                <input
+                    type="range"
+                    min="0"
+                    max={duration || 0}
+                    value={currentTime}
+                    onChange={handleSeekChange}
+                    onMouseDown={handleSeekStart}
+                    onTouchStart={handleSeekStart}
+                    onMouseUp={handleSeekComplete}
+                    onTouchEnd={handleSeekComplete}
+                    disabled={!audioFile}
+                    className="seek-bar"
+                    step="0.1"
+                />
+            </div>
+
+            <div className="time-container">
+                <div>{formatTime(currentTime)}</div>
+                <div>{formatTime(duration)}</div>
+            </div>
+
             <div className="audio-controls">
-                <button onClick={togglePlayPause} disabled={!audioFile}>
-                    {isPlaying ? 'Pause' : 'Play'}
-                </button>
-
-                <div className="seek-bar-container">
-                    <span className="time-display">{formatTime(currentTime)}</span>
-                    <input
-                        type="range"
-                        min="0"
-                        max={duration || 0}
-                        value={currentTime}
-                        onChange={handleSeekChange}
-                        onMouseDown={handleSeekStart}
-                        onTouchStart={handleSeekStart}
-                        onMouseUp={handleSeekComplete}
-                        onTouchEnd={handleSeekComplete}
-                        disabled={!audioFile}
-                        className="seek-bar"
-                        step="0.1"
-                    />
-                    <span className="time-display">{formatTime(duration)}</span>
+                <div className="round-button" onClick={togglePlayPause}>
+                    {isPlaying ? <Pause/> : <Play/>}
                 </div>
-
-                <button onClick={toggleFilter} disabled={!filter || !audioFile}>
-                    {isFiltering ? 'Filters Off' : 'Filters On'}
-                </button>
+                <div className="round-button" onClick={toggleFilter}>
+                    {isFiltering ? <PenOff/> : <WandSparkles/>}
+                </div>
             </div>
         </div>
     );

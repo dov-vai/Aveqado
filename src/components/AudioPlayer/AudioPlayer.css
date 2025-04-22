@@ -1,5 +1,44 @@
+.audio-player {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.time-container {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    justify-content: space-between;
+    font-size: 10pt;
+
+}
+
+.seek-bar-container {
+    width: 100%;
+}
+
+.seek-bar {
+    width: 100%;
+    background-color: var(--darker-background-color);
+}
+
+input[type="range"]::-webkit-slider-runnable-track {
+    background: var(--accent-color);
+    border-radius: 10px;
+}
+
+input[type="range"]::-moz-range-progress {
+    background: var(--accent-color);
+}
+
+input[type="range"]::-moz-range-track {
+    background: var(--line-color);
+}
+
 .audio-controls {
     display: flex;
     flex-direction: row;
-    justify-content: center;
+    justify-content: space-evenly;
+    width: 100%;
 }
