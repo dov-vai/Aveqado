@@ -11,9 +11,10 @@ interface EqSelectionProps {
     appliedFilter: Filter;
     filters: Filter[];
     setFilters: React.Dispatch<React.SetStateAction<Filter[]>>;
+    singleMode: boolean;
 }
 
-function EqSelection({width, height, minFreq, maxFreq, appliedFilter, filters, setFilters}: EqSelectionProps) {
+function EqSelection({width, height, minFreq, maxFreq, appliedFilter, filters, setFilters, singleMode}: EqSelectionProps) {
     const [hoveredFilter, setHoveredFilter] = useState<Filter>();
 
     const frequencies: number[] = [];
@@ -55,7 +56,12 @@ function EqSelection({width, height, minFreq, maxFreq, appliedFilter, filters, s
         }
 
         setHoveredFilter(undefined);
-        setFilters([...filters, filter]);
+
+        if (singleMode) {
+            setFilters([filter]);
+        } else{
+            setFilters([...filters, filter]);
+        }
     };
 
     const handleMouseOver = (e: React.MouseEvent<HTMLDivElement>, filter: Filter) => {

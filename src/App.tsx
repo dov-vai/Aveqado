@@ -74,7 +74,9 @@ function App() {
                                      maxFreq={maxFreq}
                                      appliedFilter={filter}
                                      filters={filters}
-                                     setFilters={setFilters}/>
+                                     setFilters={setFilters}
+                                     singleMode={true}
+                        />
                     </div>
                 </div>
                 <div className="sidebar">
