@@ -44,23 +44,38 @@ function App() {
     };
 
     useEffect(() => {
-        const width = canvasRef.current!.clientWidth;
-        const height = canvasRef.current!.clientHeight;
-        setWidth(width);
-        setHeight(height);
+        const updateCanvasDimensions = () => {
+            const width = canvasRef.current!.clientWidth;
+            const height = canvasRef.current!.clientHeight;
+            setWidth(width);
+            setHeight(height);
+        };
+
+        updateCanvasDimensions();
+
+        const resizeObserver = new ResizeObserver(updateCanvasDimensions);
+        if (canvasRef.current) {
+            resizeObserver.observe(canvasRef.current);
+        }
+
+        return () => {
+            resizeObserver.disconnect();
+        };
     }, []);
 
     return (
         <>
             <div className="container">
-                <div className="canvas-area" ref={canvasRef}>
-                    <EqSelection width={width}
-                                 height={height}
-                                 minFreq={minFreq}
-                                 maxFreq={maxFreq}
-                                 appliedFilter={filter}
-                                 filters={filters}
-                                 setFilters={setFilters}/>
+                <div className="canvas-area">
+                    <div className="canvas-inner" ref={canvasRef}>
+                        <EqSelection width={width}
+                                     height={height}
+                                     minFreq={minFreq}
+                                     maxFreq={maxFreq}
+                                     appliedFilter={filter}
+                                     filters={filters}
+                                     setFilters={setFilters}/>
+                    </div>
                 </div>
                 <div className="sidebar">
                     <div className="card">
