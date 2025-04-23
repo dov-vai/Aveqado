@@ -48,15 +48,13 @@ function EqSelection({width, height, minFreq, maxFreq, appliedFilter, filters, s
         ));
     }
 
-    const handleRegionClick = (e: React.MouseEvent<HTMLDivElement>, filter: Filter) => {
+    const handleRegionClick = (filter: Filter) => {
         if (isFilterSelected(filter)) {
             removeFilter(filter);
-            e.currentTarget.style.backgroundColor = 'rgba(0,0,0,0)';
             return;
         }
 
         setHoveredFilter(undefined);
-        e.currentTarget.style.backgroundColor = 'rgba(167, 243, 208, 0.1)';
         setFilters([...filters, filter]);
     };
 
@@ -112,8 +110,11 @@ function EqSelection({width, height, minFreq, maxFreq, appliedFilter, filters, s
                         <div key={freq}>
                             <div
                                 className="frequency-region"
-                                style={{left: `${x1}px`, width: `${blockWidth}px`,}}
-                                onClick={(e) => handleRegionClick(e, posFilter)}
+                                style={{
+                                    left: `${x1}px`, width: `${blockWidth}px`,
+                                    backgroundColor: isFilterSelected(posFilter) ? 'rgba(167, 243, 208, 0.1)' : 'rgba(0,0,0,0)'
+                                }}
+                                onClick={() => handleRegionClick(posFilter)}
                                 onMouseOver={(e) => {
                                     handleMouseOver(e, posFilter);
                                 }}
@@ -122,8 +123,11 @@ function EqSelection({width, height, minFreq, maxFreq, appliedFilter, filters, s
                             </div>
                             <div
                                 className="frequency-region"
-                                style={{left: `${x1}px`, width: `${blockWidth}px`, top: '50%'}}
-                                onClick={(e) => handleRegionClick(e, negFilter)}
+                                style={{
+                                    left: `${x1}px`, width: `${blockWidth}px`, top: '50%',
+                                    backgroundColor: isFilterSelected(negFilter) ? 'rgba(167, 243, 208, 0.1)' : 'rgba(0,0,0,0)'
+                                }}
+                                onClick={() => handleRegionClick(negFilter)}
                                 onMouseOver={(e) => {
                                     handleMouseOver(e, negFilter);
                                 }}
