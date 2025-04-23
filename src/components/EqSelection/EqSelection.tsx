@@ -55,12 +55,12 @@ function EqSelection({width, height, minFreq, maxFreq, appliedFilter, filters, s
             return;
         }
 
+        setHoveredFilter(undefined);
         e.currentTarget.style.backgroundColor = 'rgba(167, 243, 208, 0.1)';
         setFilters([...filters, filter]);
     };
 
     const handleMouseOver = (e: React.MouseEvent<HTMLDivElement>, filter: Filter) => {
-        // FIXME: when clicked, hovering also applies the filter and it becomes a double peak
         // FIXME: positive and negative filter on the same frequency doesn't make sense
         if (isFilterSelected(filter)) {
             return;
