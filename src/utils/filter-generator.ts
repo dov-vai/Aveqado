@@ -1,17 +1,23 @@
 import {Filter} from "../components/EQGraph/filter.ts";
 import {RandomUtils} from "./random-utils.ts";
+import {AudioUtils} from "./audio-utils.ts";
 
 export class FilterGenerator {
     private readonly minDb: number;
     private readonly maxDb: number;
-    private readonly freqs: number[];
+    private readonly centerFreqs: number[];
     private readonly Q: number;
 
-    constructor(minFreq: number, maxFreq: number, freqMultiplier: number, minDb: number, maxDb: number) {
+    constructor(minFreq: number, maxFreq: number, bands: number, minDb: number, maxDb: number) {
+        if (bands < 2) {
+            throw new Error("FilterGenerator: bands must be >= 2");
+        }
+
         this.minDb = minDb;
         this.maxDb = maxDb;
-        this.freqs = this.calculateCenterFreqs(minFreq, maxFreq, freqMultiplier);
-        this.Q = this.calculateQ(minFreq, minFreq * freqMultiplier);
+        const freqs = AudioUtils.generateBands(minFreq, maxFreq, bands);
+        this.centerFreqs = this.calculateCenterFreqs(freqs);
+        this.Q = this.calculateQ(freqs[0], freqs[1]);
     }
 
     private calculateQ(freqLow: number, freqHigh: number): number {
@@ -24,25 +30,25 @@ export class FilterGenerator {
         return Math.sqrt(freqLow * freqHigh);
     };
 
-    private calculateCenterFreqs(minFreq: number, maxFreq: number, multiplier: number): number[] {
-        const freqs: number[] = [];
+    private calculateCenterFreqs(freqs: number[]): number[] {
+        const centerFreqs: number[] = [];
 
-        for (let freq = minFreq; freq < maxFreq; freq *= multiplier) {
-            const centerFreq = this.getRegionCenterFreq(freq, freq * multiplier);
-            freqs.push(centerFreq);
+        for (let i = 0; i < freqs.length - 1; i++) {
+            const centerFreq = this.getRegionCenterFreq(freqs[i], freqs[i + 1]);
+            centerFreqs.push(centerFreq);
         }
 
-        return freqs;
+        return centerFreqs;
     }
 
     public generate(): Filter {
-        const randomIdx = RandomUtils.getRndInteger(0, this.freqs.length)
+        const randomIdx = RandomUtils.getRndInteger(0, this.centerFreqs.length)
         let randomGain = RandomUtils.getRndInteger(this.minDb, this.maxDb);
         randomGain = RandomUtils.getRndInteger(0, 2) ? randomGain : -randomGain;
 
         return {
             type: "peaking",
-            frequency: this.freqs[randomIdx],
+            frequency: this.centerFreqs[randomIdx],
             gain: randomGain,
             Q: this.Q
         };

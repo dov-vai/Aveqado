@@ -9,6 +9,7 @@ interface EQGraphProps {
     height?: number;
     minFreq?: number;
     maxFreq?: number;
+    bands?: number;
     minDb?: number;
     maxDb?: number;
 }
@@ -19,6 +20,7 @@ function EqGraph({
                      height = 800,
                      minFreq = 20,
                      maxFreq = 20480,
+                     bands = 3,
                      minDb = -12,
                      maxDb = 12
                  }: EQGraphProps) {
@@ -29,12 +31,12 @@ function EqGraph({
         if (!canvas) return;
 
         const renderer = new EqGraphRenderer(canvas, {
-            width, height, minFreq, maxFreq, minDb, maxDb, filters
+            width, height, minFreq, maxFreq, bands, minDb, maxDb, filters
         });
 
         renderer.draw();
 
-    }, [filters, width, height, minFreq, maxFreq, minDb, maxDb]);
+    }, [filters, width, height, minFreq, maxFreq, bands, minDb, maxDb]);
 
     return (
         <div className="eq-graph-container">

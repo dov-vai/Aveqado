@@ -6,6 +6,7 @@ import {Filter} from "./components/EQGraph/filter.ts";
 import AudioFileSelector from "./components/AudioPlayer/AudioFileSelector.tsx";
 import {FilterGenerator} from "./utils/filter-generator.ts";
 import {ArrowBigRight, X} from "lucide-react";
+import DifficultySelection from "./components/DifficultySelection/DifficultySelection.tsx";
 
 function App() {
     const [width, setWidth] = useState(1280);
@@ -13,11 +14,12 @@ function App() {
     const canvasRef = useRef<HTMLDivElement | null>(null);
     const minFreq = 20;
     const maxFreq = 20480;
-    const freqMultiplier = 2;
+    // we need i ranges but there's i+1 bands
+    const [bands, setBands] = useState(3 + 1);
     const minDb = 3;
     const maxDb = 8;
 
-    const filterGenerator = new FilterGenerator(minFreq, maxFreq, freqMultiplier, minDb, maxDb);
+    const filterGenerator = new FilterGenerator(minFreq, maxFreq, bands, minDb, maxDb);
 
     const [audioFile, setAudioFile] = useState<File>();
     const [filters, setFilters] = useState<Filter[]>([]);
@@ -63,6 +65,18 @@ function App() {
         };
     }, []);
 
+    const handleSetBands = (newBands: number) => {
+        if (newBands <= 2) {
+            return;
+        }
+
+        setBands(newBands);
+
+        const generator = new FilterGenerator(minFreq, maxFreq, newBands, minDb, maxDb);
+        setFilter(generator.generate());
+        setFilters([]);
+    }
+
     return (
         <>
             <div className="container">
@@ -72,6 +86,7 @@ function App() {
                                      height={height}
                                      minFreq={minFreq}
                                      maxFreq={maxFreq}
+                                     bands={bands}
                                      appliedFilter={filter}
                                      filters={filters}
                                      setFilters={setFilters}
@@ -91,6 +106,9 @@ function App() {
                     </div>
                     <div className="card">
                         <AudioFileSelector onFileSelected={handleFileSelected}/>
+                    </div>
+                    <div className="card">
+                        <DifficultySelection bands={bands} handleSetBands={handleSetBands}/>
                     </div>
                 </div>
             </div>

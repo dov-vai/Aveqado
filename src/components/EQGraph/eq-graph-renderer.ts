@@ -1,5 +1,6 @@
 import {Filter} from "./filter.ts";
 import {ThemeColors} from "../../utils/theme-colors.ts";
+import {AudioUtils} from "../../utils/audio-utils.ts";
 
 export class EqGraphRenderer {
     private canvas: HTMLCanvasElement;
@@ -8,6 +9,7 @@ export class EqGraphRenderer {
     private height: number;
     private minFreq: number;
     private maxFreq: number;
+    private bands: number;
     private minDb: number;
     private maxDb: number;
     private filters: Filter[];
@@ -17,6 +19,7 @@ export class EqGraphRenderer {
         height: number;
         minFreq: number;
         maxFreq: number;
+        bands: number;
         minDb: number;
         maxDb: number;
         filters: Filter[];
@@ -30,6 +33,7 @@ export class EqGraphRenderer {
         this.height = options.height;
         this.minFreq = options.minFreq;
         this.maxFreq = options.maxFreq;
+        this.bands = options.bands;
         this.minDb = options.minDb;
         this.maxDb = options.maxDb;
         this.filters = options.filters;
@@ -97,7 +101,9 @@ export class EqGraphRenderer {
         this.ctx.lineWidth = 0.5;
 
         // frequency grid lines (octaves)
-        for (let freq = this.minFreq; freq <= this.maxFreq; freq *= 2) {
+        const freqs = AudioUtils.generateBands(this.minFreq, this.maxFreq, this.bands);
+
+        for (const freq of freqs) {
             const x: number = this.freqToX(freq);
             this.ctx.beginPath();
             this.ctx.moveTo(x, 0);
@@ -108,7 +114,7 @@ export class EqGraphRenderer {
             this.ctx.fillStyle = ThemeColors.TextColor;
             this.ctx.font = '10px Arial';
             this.ctx.textAlign = 'center';
-            const label: string = freq >= 1000 ? `${freq / 1000}k` : `${freq}`;
+            const label: string = freq >= 1000 ? `${Math.round(freq / 1000 * 100) / 100}k` : `${freq}`;
             this.ctx.fillText(label, x, this.height - 5);
         }
     }

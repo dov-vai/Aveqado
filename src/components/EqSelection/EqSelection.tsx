@@ -2,25 +2,34 @@ import React, {useState} from "react";
 import {Filter} from "../EQGraph/filter.ts";
 import EqGraph from "../EQGraph/EqGraph.tsx";
 import './EqSelection.css';
+import {AudioUtils} from "../../utils/audio-utils.ts";
 
 interface EqSelectionProps {
     width: number;
     height: number;
     minFreq: number;
     maxFreq: number;
+    bands: number;
     appliedFilter: Filter;
     filters: Filter[];
     setFilters: React.Dispatch<React.SetStateAction<Filter[]>>;
     singleMode: boolean;
 }
 
-function EqSelection({width, height, minFreq, maxFreq, appliedFilter, filters, setFilters, singleMode}: EqSelectionProps) {
+function EqSelection({
+                         width,
+                         height,
+                         minFreq,
+                         maxFreq,
+                         bands,
+                         appliedFilter,
+                         filters,
+                         setFilters,
+                         singleMode
+                     }: EqSelectionProps) {
     const [hoveredFilter, setHoveredFilter] = useState<Filter>();
 
-    const frequencies: number[] = [];
-    for (let freq = minFreq; freq <= maxFreq; freq *= 2) {
-        frequencies.push(freq);
-    }
+    const frequencies = AudioUtils.generateBands(minFreq, maxFreq, bands);
 
     const freqToX = (freq: number): number => {
         return width * (Math.log10(freq) - Math.log10(minFreq)) /
@@ -59,7 +68,7 @@ function EqSelection({width, height, minFreq, maxFreq, appliedFilter, filters, s
 
         if (singleMode) {
             setFilters([filter]);
-        } else{
+        } else {
             setFilters([...filters, filter]);
         }
     };
@@ -89,7 +98,7 @@ function EqSelection({width, height, minFreq, maxFreq, appliedFilter, filters, s
 
     return (
         <div className="eq-selection-container" style={{width, height}}>
-            <EqGraph filters={filtersToRender} width={width} height={height}/>
+            <EqGraph filters={filtersToRender} bands={bands} width={width} height={height}/>
 
             <div className="frequency-selector-overlay">
                 {frequencies.map((freq, index) => {
