@@ -1,0 +1,11 @@
+.sample-selector {
+    display: flex;
+    flex-direction: column;
+}
+
+.sample-file {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    column-gap: 8px;
+}

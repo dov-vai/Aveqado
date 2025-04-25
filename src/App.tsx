@@ -7,6 +7,7 @@ import AudioFileSelector from "./components/AudioPlayer/AudioFileSelector.tsx";
 import {FilterGenerator} from "./utils/filter-generator.ts";
 import {ArrowBigRight, X} from "lucide-react";
 import DifficultySelection from "./components/DifficultySelection/DifficultySelection.tsx";
+import SampleAudioSelector from "./components/SampleAudioSelector/SampleAudioSelector.tsx";
 
 function App() {
     const [width, setWidth] = useState(1280);
@@ -106,6 +107,7 @@ function App() {
                     </div>
                     <div className="card">
                         <AudioFileSelector onFileSelected={handleFileSelected}/>
+                        <SampleAudioSelector onFileSelected={handleFileSelected}/>
                     </div>
                     <div className="card">
                         <DifficultySelection bands={bands} handleSetBands={handleSetBands}/>
