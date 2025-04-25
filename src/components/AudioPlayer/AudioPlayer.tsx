@@ -2,6 +2,7 @@ import {useEffect, useRef, useState} from 'react';
 import {Filter} from "../EQGraph/filter.ts";
 import './AudioPlayer.css';
 import {Pause, PenOff, Play, WandSparkles} from "lucide-react";
+import {TextUtils} from "../../utils/text-utils.ts";
 
 interface AudioPlayerProps {
     audioFile?: File;
@@ -149,6 +150,8 @@ function AudioPlayer({audioFile, filter}: AudioPlayerProps) {
                    onTimeUpdate={handleTimeUpdate}
                    onLoadedMetadata={handleLoadedMetadata}
                    onEnded={() => setIsPlaying(false)}/>
+
+            <div>{TextUtils.removeFileExtension(audioFile?.name)}</div>
 
             <div className="seek-bar-container">
                 <input
