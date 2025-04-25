@@ -105,13 +105,6 @@ export class EqGraphRenderer {
             this.ctx.moveTo(x, 0);
             this.ctx.lineTo(x, this.height);
             this.ctx.stroke();
-
-            // label
-            this.ctx.fillStyle = ThemeColors.TextColor;
-            this.ctx.font = '10px Arial';
-            this.ctx.textAlign = 'center';
-            const label: string = freq >= 1000 ? `${Math.round(freq / 1000 * 100) / 100}k` : `${freq}`;
-            this.ctx.fillText(label, x, this.height - 5);
         }
     }
 
@@ -126,12 +119,6 @@ export class EqGraphRenderer {
             this.ctx.moveTo(0, y);
             this.ctx.lineTo(this.width, y);
             this.ctx.stroke();
-
-            // label
-            this.ctx.fillStyle = ThemeColors.TextColor;
-            this.ctx.font = '10px Arial';
-            this.ctx.textAlign = 'right';
-            this.ctx.fillText(`${db}dB`, 25, y + 3);
         }
 
         // draw 0db line

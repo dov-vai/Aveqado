@@ -1,7 +1,8 @@
-import {useEffect, useRef} from 'react';
+import {useEffect, useRef, useState} from 'react';
 import './EqGraph.css';
 import {Filter} from "./filter.ts";
 import {EqGraphRenderer} from "./eq-graph-renderer.ts";
+import {EqUtils} from "../../utils/eq-utils.ts";
 
 interface EQGraphProps {
     filters: Filter[];
@@ -25,6 +26,8 @@ function EqGraph({
                      maxDb = 12
                  }: EQGraphProps) {
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
+    const [freqLabels, setFreqLabels] = useState<{ freq: number, x: number }[]>([]);
+    const [dbLabels, setDbLabels] = useState<{ db: number, y: number }[]>([]);
 
     useEffect(() => {
         const canvas = canvasRef.current;
@@ -36,11 +39,43 @@ function EqGraph({
 
         renderer.draw();
 
+        const freqs = EqUtils.generateBands(minFreq, maxFreq, bands);
+        const freqLabels = freqs.map(freq => ({
+            freq,
+            x: EqUtils.freqToX(freq, width, minFreq, maxFreq)
+        }));
+        setFreqLabels(freqLabels);
+
+        const dbLabels = [];
+        for (let db = minDb; db <= maxDb; db += 3) {
+            dbLabels.push({
+                db,
+                y: EqUtils.dbToY(db, height, minDb, maxDb)
+            });
+        }
+        setDbLabels(dbLabels);
+
     }, [filters, width, height, minFreq, maxFreq, bands, minDb, maxDb]);
 
     return (
         <div className="eq-graph-container">
+            <div className="db-labels">
+                {dbLabels.map(({db, y}) => (
+                    <div key={db} className="db-label" style={{top: `${y}px`}}>
+                        {db}
+                    </div>
+                ))}
+            </div>
+
             <canvas ref={canvasRef}/>
+
+            <div className="freq-labels">
+                {freqLabels.map(({freq, x}) => (
+                    <div key={freq} className="freq-label" style={{left: `${x}px`}}>
+                        {freq >= 1000 ? `${Math.round(freq / 1000 * 100) / 100}k` : `${freq}`}
+                    </div>
+                ))}
+            </div>
         </div>
     );
 }

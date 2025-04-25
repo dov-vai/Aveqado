@@ -8,3 +8,30 @@
 .eq-graph-container canvas {
     display: block;
 }
+
+.db-labels {
+    width: 20px;
+    position: relative;
+    font-size: 10pt;
+}
+
+.db-label {
+    position: absolute;
+    right: 150%;
+    transform: translateY(-50%);
+}
+
+.freq-labels {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 20px;
+    font-size: 10pt;
+}
+
+.freq-label {
+    position: absolute;
+    transform: translateX(-50%);
+    top: 150%;
+}
