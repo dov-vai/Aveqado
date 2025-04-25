@@ -2,7 +2,7 @@ import React, {useState} from "react";
 import {Filter} from "../EQGraph/filter.ts";
 import EqGraph from "../EQGraph/EqGraph.tsx";
 import './EqSelection.css';
-import {AudioUtils} from "../../utils/audio-utils.ts";
+import {EqUtils} from "../../utils/eq-utils.ts";
 
 interface EqSelectionProps {
     width: number;
@@ -29,15 +29,10 @@ function EqSelection({
                      }: EqSelectionProps) {
     const [hoveredFilter, setHoveredFilter] = useState<Filter>();
 
-    const frequencies = AudioUtils.generateBands(minFreq, maxFreq, bands);
+    const frequencies = EqUtils.generateBands(minFreq, maxFreq, bands);
 
     const freqToX = (freq: number): number => {
-        return width * (Math.log10(freq) - Math.log10(minFreq)) /
-            (Math.log10(maxFreq) - Math.log10(minFreq));
-    };
-
-    const getRegionCenterFreq = (freqLow: number, freqHigh: number): number => {
-        return Math.sqrt(freqLow * freqHigh);
+        return EqUtils.freqToX(freq, width, minFreq, maxFreq);
     };
 
     const isFilterSelected = (filter: Filter): boolean => {
@@ -108,7 +103,7 @@ function EqSelection({
                     const x1 = freqToX(freq);
                     const x2 = freqToX(nextFreq);
                     const blockWidth = x2 - x1;
-                    const centerFreq = getRegionCenterFreq(freq, nextFreq);
+                    const centerFreq = EqUtils.getCenterFreq(freq, nextFreq);
 
                     const posFilter: Filter = {
                         ...appliedFilter,

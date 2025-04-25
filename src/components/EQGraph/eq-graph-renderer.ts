@@ -1,6 +1,6 @@
 import {Filter} from "./filter.ts";
 import {ThemeColors} from "../../utils/theme-colors.ts";
-import {AudioUtils} from "../../utils/audio-utils.ts";
+import {EqUtils} from "../../utils/eq-utils.ts";
 
 export class EqGraphRenderer {
     private canvas: HTMLCanvasElement;
@@ -51,19 +51,15 @@ export class EqGraphRenderer {
     }
 
     private freqToX(freq: number): number {
-        return this.width * (Math.log10(freq) - Math.log10(this.minFreq)) /
-            (Math.log10(this.maxFreq) - Math.log10(this.minFreq));
+        return EqUtils.freqToX(freq, this.width, this.minFreq, this.maxFreq);
     }
 
     private xToFreq(x: number): number {
-        return Math.pow(10,
-            Math.log10(this.minFreq) + (x / this.width) *
-            (Math.log10(this.maxFreq) - Math.log10(this.minFreq))
-        );
+        return EqUtils.xToFreq(x, this.width, this.minFreq, this.maxFreq);
     }
 
     private dbToY(db: number): number {
-        return this.height * (1 - (db - this.minDb) / (this.maxDb - this.minDb));
+        return EqUtils.dbToY(db, this.height, this.minDb, this.maxDb);
     }
 
     private calculateResponse(frequency: number): number {
@@ -101,7 +97,7 @@ export class EqGraphRenderer {
         this.ctx.lineWidth = 0.5;
 
         // frequency grid lines (octaves)
-        const freqs = AudioUtils.generateBands(this.minFreq, this.maxFreq, this.bands);
+        const freqs = EqUtils.generateBands(this.minFreq, this.maxFreq, this.bands);
 
         for (const freq of freqs) {
             const x: number = this.freqToX(freq);

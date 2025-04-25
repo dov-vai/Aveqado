@@ -1,6 +1,6 @@
 import {Filter} from "../components/EQGraph/filter.ts";
 import {RandomUtils} from "./random-utils.ts";
-import {AudioUtils} from "./audio-utils.ts";
+import {EqUtils} from "./eq-utils.ts";
 
 export class FilterGenerator {
     private readonly minDb: number;
@@ -15,26 +15,16 @@ export class FilterGenerator {
 
         this.minDb = minDb;
         this.maxDb = maxDb;
-        const freqs = AudioUtils.generateBands(minFreq, maxFreq, bands);
+        const freqs = EqUtils.generateBands(minFreq, maxFreq, bands);
         this.centerFreqs = this.calculateCenterFreqs(freqs);
-        this.Q = this.calculateQ(freqs[0], freqs[1]);
+        this.Q = EqUtils.calculateQ(freqs[0], freqs[1]);
     }
-
-    private calculateQ(freqLow: number, freqHigh: number): number {
-        const centerFreq = this.getRegionCenterFreq(freqLow, freqHigh);
-
-        return centerFreq / (freqHigh - freqLow);
-    }
-
-    private getRegionCenterFreq(freqLow: number, freqHigh: number): number {
-        return Math.sqrt(freqLow * freqHigh);
-    };
 
     private calculateCenterFreqs(freqs: number[]): number[] {
         const centerFreqs: number[] = [];
 
         for (let i = 0; i < freqs.length - 1; i++) {
-            const centerFreq = this.getRegionCenterFreq(freqs[i], freqs[i + 1]);
+            const centerFreq = EqUtils.getCenterFreq(freqs[i], freqs[i + 1]);
             centerFreqs.push(centerFreq);
         }
 
