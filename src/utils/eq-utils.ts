@@ -1,3 +1,5 @@
+import {Filter} from "../components/EQGraph/filter.ts";
+
 export class EqUtils {
 
     private constructor() {
@@ -42,4 +44,11 @@ export class EqUtils {
 
         return centerFreq / (freqHigh - freqLow);
     }
+
+    static filterEquals = (filter1: Filter, filter2: Filter) => {
+        return (filter1.type === filter2.type &&
+            filter1.frequency === filter2.frequency &&
+            filter1.Q === filter2.Q &&
+            filter1.gain === filter2.gain);
+    };
 }

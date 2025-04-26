@@ -12,38 +12,38 @@ import SampleAudioSelector from "./components/SampleAudioSelector/SampleAudioSel
 function App() {
     const [width, setWidth] = useState(1280);
     const [height, setHeight] = useState(800);
+    // we need i ranges but there's i+1 bands
+    const [bands, setBands] = useState(3 + 1);
     const canvasRef = useRef<HTMLDivElement | null>(null);
     const minFreq = 20;
     const maxFreq = 20480;
-    // we need i ranges but there's i+1 bands
-    const [bands, setBands] = useState(3 + 1);
     const minDb = 3;
     const maxDb = 8;
 
     const filterGenerator = new FilterGenerator(minFreq, maxFreq, bands, minDb, maxDb);
 
     const [audioFile, setAudioFile] = useState<File>();
-    const [filters, setFilters] = useState<Filter[]>([]);
     const [filter, setFilter] = useState<Filter>(filterGenerator.generate());
+    const [showAnswer, setShowAnswer] = useState(false);
+    const [answers, setAnswers] = useState<Filter[]>([]);
 
     const handleFileSelected = (file: File) => {
         setAudioFile(file);
     };
 
     const handleSubmit = () => {
-        if (filters.length < 1) {
+        if (answers.length < 1 && !showAnswer) {
             return;
         }
 
-        if (filters[0].frequency === filter.frequency) {
-            alert("yes");
-        } else {
-            alert("no");
+        if (showAnswer) {
+            const newFilter = filterGenerator.generate();
+            setShowAnswer(false);
+            setFilter(newFilter);
+            return;
         }
 
-        const newFilter = filterGenerator.generate();
-        setFilter(newFilter);
-        setFilters([]);
+        setShowAnswer(true);
     };
 
     useEffect(() => {
@@ -75,8 +75,7 @@ function App() {
 
         const generator = new FilterGenerator(minFreq, maxFreq, newBands, minDb, maxDb);
         setFilter(generator.generate());
-        setFilters([]);
-    }
+    };
 
     return (
         <>
@@ -89,9 +88,9 @@ function App() {
                                      maxFreq={maxFreq}
                                      bands={bands}
                                      appliedFilter={filter}
-                                     filters={filters}
-                                     setFilters={setFilters}
                                      singleMode={true}
+                                     showAnswer={showAnswer}
+                                     setAnswers={setAnswers}
                         />
                     </div>
                 </div>
@@ -99,7 +98,7 @@ function App() {
                     <div className="card">
                         <div className="round-button"
                              onClick={() => handleSubmit()}>
-                            {filters.length < 1 ? <X/> : <ArrowBigRight/>}
+                            {answers.length < 1 && !showAnswer ? <X/> : <ArrowBigRight/>}
                         </div>
                     </div>
                     <div className="card">

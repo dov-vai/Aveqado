@@ -1,8 +1,9 @@
-import React, {useState} from "react";
+import {useEffect, useMemo, useState} from "react";
 import {Filter} from "../EQGraph/filter.ts";
 import EqGraph from "../EQGraph/EqGraph.tsx";
 import './EqSelection.css';
 import {EqUtils} from "../../utils/eq-utils.ts";
+import FrequencyRegion, {FreqRegionProps, RegionState} from "./FrequencyRegion.tsx";
 
 interface EqSelectionProps {
     width: number;
@@ -11,11 +12,12 @@ interface EqSelectionProps {
     maxFreq: number;
     bands: number;
     appliedFilter: Filter;
-    filters: Filter[];
-    setFilters: React.Dispatch<React.SetStateAction<Filter[]>>;
     singleMode: boolean;
+    showAnswer: boolean;
+    setAnswers: React.Dispatch<React.SetStateAction<Filter[]>>;
 }
 
+// TODO: support for multiple applied filters
 function EqSelection({
                          width,
                          height,
@@ -23,127 +25,138 @@ function EqSelection({
                          maxFreq,
                          bands,
                          appliedFilter,
-                         filters,
-                         setFilters,
-                         singleMode
+                         singleMode,
+                         showAnswer,
+                         setAnswers
                      }: EqSelectionProps) {
-    const [hoveredFilter, setHoveredFilter] = useState<Filter>();
-
-    const frequencies = EqUtils.generateBands(minFreq, maxFreq, bands);
 
     const freqToX = (freq: number): number => {
         return EqUtils.freqToX(freq, width, minFreq, maxFreq);
     };
 
-    const isFilterSelected = (filter: Filter): boolean => {
-        return filters.some(f =>
-            f.type === filter.type &&
-            f.frequency === filter.frequency &&
-            f.Q === filter.Q &&
-            f.gain === filter.gain
+    const frequencyRegions = useMemo(() => {
+        const frequencies = EqUtils.generateBands(minFreq, maxFreq, bands);
+
+        return frequencies.slice(0, -1).flatMap((freq, index) => {
+            const nextFreq = frequencies[index + 1];
+            const x1 = freqToX(freq);
+            const x2 = freqToX(nextFreq);
+            const blockWidth = x2 - x1;
+            const centerFreq = EqUtils.getCenterFreq(freq, nextFreq);
+
+            const posFilter: Filter = {
+                ...appliedFilter,
+                frequency: centerFreq,
+                gain: Math.abs(appliedFilter.gain)
+            };
+
+            const negFilter: Filter = {
+                ...posFilter,
+                gain: -posFilter.gain
+            };
+
+            const regionProps: FreqRegionProps = {
+                left: x1,
+                width: blockWidth,
+                filter: posFilter,
+                state: RegionState.DEFAULT,
+                updateState: () => {
+                }
+            };
+
+            return [regionProps, {...regionProps, filter: negFilter}];
+
+        });
+    }, [width, minFreq, maxFreq, bands, appliedFilter]);
+
+    const [regions, setRegions] = useState<FreqRegionProps[]>(frequencyRegions);
+
+    useEffect(() => {
+        setRegions(frequencyRegions);
+    }, [frequencyRegions]);
+
+    useEffect(() => {
+        if (showAnswer) {
+            const correctRegion = regions.find((region) => {
+                return EqUtils.filterEquals(region.filter, appliedFilter);
+            });
+
+            if (correctRegion) {
+                updateState(correctRegion, RegionState.CORRECT);
+            }
+
+            const selectedRegion = regions.find((region) => {
+                return region.state === RegionState.SELECTED;
+            });
+
+            if (selectedRegion && correctRegion != selectedRegion) {
+                updateState(selectedRegion, RegionState.WRONG);
+            }
+        }
+    }, [showAnswer]);
+
+    // FIXME: answers should be set only when selection is changed, also incorrect useEffects
+    useEffect(() => {
+        const answers = regions
+            .filter(region => region.state === RegionState.SELECTED)
+            .map(region => region.filter);
+        setAnswers(answers);
+    }, [regions, setAnswers]);
+
+    const updateState = (targetRegion: FreqRegionProps, newState: RegionState) => {
+        setRegions(prevRegions => {
+                return prevRegions.map((region) => {
+                    // FIXME: search can be made faster by having a unique key for each region
+                    if (EqUtils.filterEquals(region.filter, targetRegion.filter)) {
+                        return {...region, state: newState};
+                    }
+
+                    // clear other selections if single mode is enabled
+                    if (singleMode &&
+                        newState === RegionState.SELECTED &&
+                        region.state === RegionState.SELECTED
+                    ) {
+                        return {...region, state: RegionState.DEFAULT};
+                    }
+
+                    return region;
+                });
+            }
         );
     };
 
-    const removeFilter = (filter: Filter) => {
-        setFilters(filters.filter(f =>
-            !(f.type === filter.type &&
-                f.frequency === filter.frequency &&
-                f.Q === filter.Q &&
-                f.gain === filter.gain)
-        ));
-    }
-
-    const handleRegionClick = (filter: Filter) => {
-        if (isFilterSelected(filter)) {
-            removeFilter(filter);
-            return;
-        }
-
-        setHoveredFilter(undefined);
-
-        if (singleMode) {
-            setFilters([filter]);
-        } else {
-            setFilters([...filters, filter]);
-        }
-    };
-
-    const handleMouseOver = (e: React.MouseEvent<HTMLDivElement>, filter: Filter) => {
-        // FIXME: positive and negative filter on the same frequency doesn't make sense
-        if (isFilterSelected(filter)) {
-            return;
-        }
-
-        e.currentTarget.style.backgroundColor = 'rgba(167, 243, 208, 0.1)';
-        setHoveredFilter(filter);
-    };
-
-    const handleMouseOut = (e: React.MouseEvent<HTMLDivElement>, filter: Filter) => {
-        if (isFilterSelected(filter)) {
-            return;
-        }
-
-        e.currentTarget.style.backgroundColor = 'rgba(0, 0, 0, 0)';
-        setHoveredFilter(undefined);
-    };
-
-    const filtersToRender = hoveredFilter
-        ? [...filters, hoveredFilter]
-        : filters;
+    const filtersToRender = regions
+        .filter(region => {
+            switch (region.state) {
+                case RegionState.HOVERED:
+                case RegionState.SELECTED:
+                case RegionState.CORRECT: {
+                    return true;
+                }
+            }
+            return false;
+        })
+        .map(region => region.filter);
 
     return (
         <div className="eq-selection-container" style={{width, height}}>
             <EqGraph filters={filtersToRender} bands={bands} width={width} height={height}/>
 
             <div className="frequency-selector-overlay">
-                {frequencies.map((freq, index) => {
-                    if (index === frequencies.length - 1) return null;
-
-                    const nextFreq = frequencies[index + 1];
-                    const x1 = freqToX(freq);
-                    const x2 = freqToX(nextFreq);
-                    const blockWidth = x2 - x1;
-                    const centerFreq = EqUtils.getCenterFreq(freq, nextFreq);
-
-                    const posFilter: Filter = {
-                        ...appliedFilter,
-                        frequency: centerFreq,
-                        gain: Math.abs(appliedFilter.gain)
-                    };
-                    const negFilter: Filter = {
-                        ...appliedFilter,
-                        frequency: centerFreq,
-                        gain: -Math.abs(appliedFilter.gain)
-                    };
+                {regions.map((region, index) => {
+                    if (showAnswer &&
+                        (region.state != RegionState.WRONG && region.state != RegionState.CORRECT)) {
+                        return null;
+                    }
 
                     return (
-                        <div key={freq}>
-                            <div
-                                className="frequency-region"
-                                style={{
-                                    left: `${x1}px`, width: `${blockWidth}px`,
-                                    backgroundColor: isFilterSelected(posFilter) ? 'rgba(167, 243, 208, 0.1)' : 'rgba(0,0,0,0)'
-                                }}
-                                onClick={() => handleRegionClick(posFilter)}
-                                onMouseOver={(e) => {
-                                    handleMouseOver(e, posFilter);
-                                }}
-                                onMouseOut={(e) => handleMouseOut(e, posFilter)}
-                            >
-                            </div>
-                            <div
-                                className="frequency-region"
-                                style={{
-                                    left: `${x1}px`, width: `${blockWidth}px`, top: '50%',
-                                    backgroundColor: isFilterSelected(negFilter) ? 'rgba(167, 243, 208, 0.1)' : 'rgba(0,0,0,0)'
-                                }}
-                                onClick={() => handleRegionClick(negFilter)}
-                                onMouseOver={(e) => {
-                                    handleMouseOver(e, negFilter);
-                                }}
-                                onMouseOut={(e) => handleMouseOut(e, negFilter)}
-                            >
-                            </div>
+                        <div key={index}>
+                            <FrequencyRegion
+                                left={region.left}
+                                width={region.width}
+                                filter={region.filter}
+                                state={region.state}
+                                updateState={(state) => updateState(region, state)}/>
                         </div>
                     );
                 })}
