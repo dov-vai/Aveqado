@@ -82,6 +82,9 @@ function App() {
             <div className="container">
                 <div className="canvas-area">
                     <div className="canvas-inner" ref={canvasRef}>
+                        <div className="logo-overlay">
+                            <img src="/logo.svg" alt="Logo" />
+                        </div>
                         <EqSelection width={width}
                                      height={height}
                                      minFreq={minFreq}
