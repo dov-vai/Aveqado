@@ -1,54 +1,31 @@
-# React + TypeScript + Vite
+<p align="center">
+    <img src="public/logo.svg" width="10%" alt="Aveqado Logo">
+</p>
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+<h1 align="center">Aveqado</h1>
 
-Currently, two official plugins are available:
+<h3 align="center">Hearing training utility</h3>
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/66bf568d-fe6b-41ff-9017-4a31d7747a08" width="62%" hspace="30"></img>
+  <img src="https://github.com/user-attachments/assets/0baa0eea-b13e-4409-bfa9-17e7ae9bba7d" width="16%"></img>
+</p>
 
-## Expanding the ESLint configuration
+# Features
+Identify and visualize audio frequencies. Mostly intended for EQ training.
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- Randomly generated bell filters
+- Filter visualization
+- Difficulty/preciseness selection
+- Provide your own audio samples
+- Mobile support
 
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
-```
+# Contributing
+Contributions are always appreciated.
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+Feel free to open an issue if you have a suggestion.
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+# LICENSE
+GNU General Public License 3.0 or later.
 
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
-```
+See [LICENSE](LICENSE) for the full text.
