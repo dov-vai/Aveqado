@@ -20,6 +20,19 @@ Identify and visualize audio frequencies. Mostly intended for EQ training.
 - Provide your own audio samples
 - Mobile support
 
+# Building
+
+```bash
+pnpm run build
+```
+
+Built project will be in `dist/` folder.
+
+To run in development mode (Vite):
+```bash
+pnpm run dev
+```
+
 # Contributing
 Contributions are always appreciated.
 
