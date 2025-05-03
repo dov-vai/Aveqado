@@ -1,9 +1,10 @@
-import {useEffect, useMemo, useState} from "react";
+import React, {useEffect, useMemo, useRef, useState} from "react";
 import {Filter} from "../EQGraph/filter.ts";
 import EqGraph from "../EQGraph/EqGraph.tsx";
 import './EqSelection.css';
 import {EqUtils} from "../../utils/eq-utils.ts";
-import FrequencyRegion, {FreqRegionProps, RegionState} from "./FrequencyRegion.tsx";
+import FrequencyRegion, {FreqRegionProps} from "./FrequencyRegion.tsx";
+import {RegionState} from "./region-state.ts";
 
 interface EqSelectionProps {
     width: number;
@@ -29,12 +30,15 @@ function EqSelection({
                          showAnswer,
                          setAnswers
                      }: EqSelectionProps) {
+    const [regions, setRegions] = useState<FreqRegionProps[]>([]);
+    const prevRegionsRef = useRef<FreqRegionProps[]>([]);
 
-    const freqToX = (freq: number): number => {
-        return EqUtils.freqToX(freq, width, minFreq, maxFreq);
-    };
+    // initialize frequency regions
+    const baseRegions = useMemo(() => {
+        const freqToX = (freq: number): number => {
+            return EqUtils.freqToX(freq, width, minFreq, maxFreq);
+        }
 
-    const frequencyRegions = useMemo(() => {
         const frequencies = EqUtils.generateBands(minFreq, maxFreq, bands);
 
         return frequencies.slice(0, -1).flatMap((freq, index) => {
@@ -44,78 +48,74 @@ function EqSelection({
             const blockWidth = x2 - x1;
             const centerFreq = EqUtils.getCenterFreq(freq, nextFreq);
 
-            const posFilter: Filter = {
-                ...appliedFilter,
-                frequency: centerFreq,
-                gain: Math.abs(appliedFilter.gain)
-            };
-
-            const negFilter: Filter = {
-                ...posFilter,
-                gain: -posFilter.gain
-            };
-
-            const regionProps: FreqRegionProps = {
+            const createRegion = (gain: number): FreqRegionProps => ({
                 left: x1,
                 width: blockWidth,
-                filter: posFilter,
+                filter: {...appliedFilter, frequency: centerFreq, gain},
                 state: RegionState.DEFAULT,
                 updateState: () => {
                 }
-            };
+            });
 
-            return [regionProps, {...regionProps, filter: negFilter}];
-
+            return [createRegion(Math.abs(appliedFilter.gain)), createRegion(-Math.abs(appliedFilter.gain))];
         });
-    }, [width, minFreq, maxFreq, bands, appliedFilter]);
-
-    const [regions, setRegions] = useState<FreqRegionProps[]>(frequencyRegions);
+    }, [appliedFilter, bands, maxFreq, minFreq, width]);
 
     useEffect(() => {
-        setRegions(frequencyRegions);
-    }, [frequencyRegions]);
+        setRegions(prev =>
+            baseRegions.map(newRegion => {
+                // preserve state
+                const prevRegion = prev.find(p =>
+                    EqUtils.filterEquals(p.filter, newRegion.filter));
+                return prevRegion ? {...newRegion, state: prevRegion.state} : newRegion;
+            })
+        );
+    }, [baseRegions]);
 
     useEffect(() => {
         if (showAnswer) {
-            const correctRegion = regions.find((region) => {
-                return EqUtils.filterEquals(region.filter, appliedFilter);
+            setRegions(prevRegions => {
+                prevRegionsRef.current = [...prevRegions];
+                return prevRegions.map(region => {
+                    if (EqUtils.filterEquals(region.filter, appliedFilter)) {
+                        return {...region, state: RegionState.CORRECT};
+                    }
+
+                    if (region.state === RegionState.SELECTED &&
+                        !EqUtils.filterEquals(region.filter, appliedFilter)) {
+                        return {...region, state: RegionState.WRONG};
+                    }
+                    return region;
+                });
             });
-
-            if (correctRegion) {
-                updateState(correctRegion, RegionState.CORRECT);
-            }
-
-            const selectedRegion = regions.find((region) => {
-                return region.state === RegionState.SELECTED;
-            });
-
-            if (selectedRegion && correctRegion != selectedRegion) {
-                updateState(selectedRegion, RegionState.WRONG);
+        }
+        else {
+            if (prevRegionsRef.current.length){
+                setRegions([...prevRegionsRef.current]);
+                prevRegionsRef.current = [];
             }
         }
-    }, [showAnswer]);
+    }, [appliedFilter, showAnswer]);
 
-    // FIXME: answers should be set only when selection is changed, also incorrect useEffects
     useEffect(() => {
-        const answers = regions
+        // if showing answer there would be no selected regions, which would clear answers
+        const answerRegions = prevRegionsRef.current.length ? prevRegionsRef.current : regions;
+        const selectedFilters = answerRegions
             .filter(region => region.state === RegionState.SELECTED)
             .map(region => region.filter);
-        setAnswers(answers);
+        setAnswers(selectedFilters);
     }, [regions, setAnswers]);
 
     const updateState = (targetRegion: FreqRegionProps, newState: RegionState) => {
         setRegions(prevRegions => {
                 return prevRegions.map((region) => {
-                    // FIXME: search can be made faster by having a unique key for each region
                     if (EqUtils.filterEquals(region.filter, targetRegion.filter)) {
                         return {...region, state: newState};
                     }
-
                     // clear other selections if single mode is enabled
                     if (singleMode &&
-                        newState === RegionState.SELECTED &&
-                        region.state === RegionState.SELECTED
-                    ) {
+                        region.state === RegionState.SELECTED &&
+                        newState === RegionState.SELECTED) {
                         return {...region, state: RegionState.DEFAULT};
                     }
 
@@ -144,6 +144,7 @@ function EqSelection({
 
             <div className="frequency-selector-overlay">
                 {regions.map((region, index) => {
+                    // if showing answers make other regions unclickable
                     if (showAnswer &&
                         (region.state != RegionState.WRONG && region.state != RegionState.CORRECT)) {
                         return null;

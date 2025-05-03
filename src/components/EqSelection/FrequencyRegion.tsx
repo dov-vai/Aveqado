@@ -1,13 +1,6 @@
 import {Filter} from "../EQGraph/filter.ts";
 import "./EqSelection.css";
-
-export enum RegionState {
-    DEFAULT,
-    HOVERED,
-    SELECTED,
-    CORRECT,
-    WRONG
-}
+import { RegionState } from "./region-state.ts";
 
 const stateToColorMap: Record<RegionState, string> = {
     [RegionState.DEFAULT]: "rgba(0, 0, 0, 0)",

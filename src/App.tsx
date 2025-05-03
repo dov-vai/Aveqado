@@ -1,7 +1,7 @@
 import './App.css'
 import EqSelection from "./components/EqSelection/EqSelection.tsx";
 import AudioPlayer from "./components/AudioPlayer/AudioPlayer.tsx";
-import {useEffect, useRef, useState} from "react";
+import {useEffect, useMemo, useRef, useState} from "react";
 import {Filter} from "./components/EQGraph/filter.ts";
 import AudioFileSelector from "./components/AudioPlayer/AudioFileSelector.tsx";
 import {FilterGenerator} from "./utils/filter-generator.ts";
@@ -20,7 +20,9 @@ function App() {
     const minDb = 3;
     const maxDb = 8;
 
-    const filterGenerator = new FilterGenerator(minFreq, maxFreq, bands, minDb, maxDb);
+    const filterGenerator = useMemo(() => {
+        return new FilterGenerator(minFreq, maxFreq, bands, minDb, maxDb);
+    }, [bands]);
 
     const [audioFile, setAudioFile] = useState<File>();
     const [filter, setFilter] = useState<Filter>(filterGenerator.generate());
@@ -32,7 +34,7 @@ function App() {
     };
 
     const handleSubmit = () => {
-        if (answers.length < 1 && !showAnswer) {
+        if (!answers.length) {
             return;
         }
 
@@ -94,6 +96,7 @@ function App() {
                                      singleMode={true}
                                      showAnswer={showAnswer}
                                      setAnswers={setAnswers}
+                                     key={`selector-${filter.frequency}`}
                         />
                     </div>
                 </div>
@@ -101,7 +104,7 @@ function App() {
                     <div className="card">
                         <div className="round-button"
                              onClick={() => handleSubmit()}>
-                            {answers.length < 1 && !showAnswer ? <X/> : <ArrowBigRight/>}
+                            {answers.length ? <ArrowBigRight/> : <X/>}
                         </div>
                     </div>
                     <div className="card">
