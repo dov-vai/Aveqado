@@ -55,6 +55,18 @@ function FrequencyRegion({left, width, filter, state, updateState}: FreqRegionPr
         return stateToColorMap[state];
     }
 
+    const getCursorState = () => {
+        switch (state) {
+            case RegionState.WRONG:
+            case RegionState.CORRECT: {
+                return "default";
+            }
+            default: {
+                return "pointer";
+            }
+        }
+    }
+
     return (
         <div
             className="frequency-region"
@@ -62,7 +74,8 @@ function FrequencyRegion({left, width, filter, state, updateState}: FreqRegionPr
                 left: `${left}px`,
                 width: `${width}px`,
                 top: `${filter.gain < 0 ? "50%" : "0"}`,
-                backgroundColor: getBackgroundColor()
+                backgroundColor: getBackgroundColor(),
+                cursor: getCursorState()
             }}
             onClick={handleRegionClick}
             onMouseOver={handleMouseOver}
