@@ -1,4 +1,4 @@
-import {useEffect, useRef, useState} from 'react';
+import {useRef} from 'react';
 import './EqGraph.css';
 import {Filter} from "./filter.ts";
 import {EqGraphRenderer} from "./eq-graph-renderer.ts";
@@ -26,36 +26,28 @@ function EqGraph({
                      maxDb = 12
                  }: EQGraphProps) {
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
-    const [freqLabels, setFreqLabels] = useState<{ freq: number, x: number }[]>([]);
-    const [dbLabels, setDbLabels] = useState<{ db: number, y: number }[]>([]);
 
-    useEffect(() => {
-        const canvas = canvasRef.current;
-        if (!canvas) return;
-
-        const renderer = new EqGraphRenderer(canvas, {
+    if (canvasRef.current) {
+        const renderer = new EqGraphRenderer(canvasRef.current, {
             width, height, minFreq, maxFreq, bands, minDb, maxDb, filters
         });
 
         renderer.draw();
+    }
 
-        const freqs = EqUtils.generateBands(minFreq, maxFreq, bands);
-        const freqLabels = freqs.map(freq => ({
-            freq,
-            x: EqUtils.freqToX(freq, width, minFreq, maxFreq)
-        }));
-        setFreqLabels(freqLabels);
+    const freqs = EqUtils.generateBands(minFreq, maxFreq, bands);
+    const freqLabels = freqs.map(freq => ({
+        freq,
+        x: EqUtils.freqToX(freq, width, minFreq, maxFreq)
+    }));
 
-        const dbLabels = [];
-        for (let db = minDb; db <= maxDb; db += 3) {
-            dbLabels.push({
-                db,
-                y: EqUtils.dbToY(db, height, minDb, maxDb)
-            });
-        }
-        setDbLabels(dbLabels);
-
-    }, [filters, width, height, minFreq, maxFreq, bands, minDb, maxDb]);
+    const dbLabels = [];
+    for (let db = minDb; db <= maxDb; db += 3) {
+        dbLabels.push({
+            db,
+            y: EqUtils.dbToY(db, height, minDb, maxDb)
+        });
+    }
 
     return (
         <div className="eq-graph-container">
