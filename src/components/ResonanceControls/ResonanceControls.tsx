@@ -1,5 +1,8 @@
+import { FileUtils } from '../../utils/file-utils';
+import { FilterExport } from '../../utils/filter-export';
 import { Filter } from '../EQGraph/filter';
 import './ResonanceControls.css';
+import { FileDown } from 'lucide-react';
 
 interface Props {
   filters: Filter[];
@@ -40,6 +43,13 @@ export default function ResonanceControls({ filters, onChange }: Props) {
       idx === i ? { ...f, gain: dbVal } : f
     );
     onChange(updated);
+  };
+
+  const onExport = () => {
+    FileUtils.downloadTextFile(
+      FilterExport.exportFiltersAPO(filters),
+      'filters.txt'
+    );
   };
 
   return (
@@ -92,6 +102,10 @@ export default function ResonanceControls({ filters, onChange }: Props) {
           </div>
         </div>
       ))}
+
+      <div className="round-button" onClick={onExport}>
+        <FileDown />
+      </div>
     </div>
   );
 }
