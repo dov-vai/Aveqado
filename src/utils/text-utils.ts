@@ -1,8 +1,7 @@
 export class TextUtils {
-    private constructor() {
-    }
+  private constructor() {}
 
-    static removeFileExtension(fileName?: string) {
-        return fileName?.replace(/\.[^/.]+$/, "");
-    }
+  static removeFileExtension(fileName?: string) {
+    return fileName?.replace(/\.[^/.]+$/, '');
+  }
 }

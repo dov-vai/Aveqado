@@ -1,18 +1,18 @@
 .number-input {
-    width: 100%;
-    box-sizing: border-box;
-    padding: 6px 8px;
-    background: var(--darker-background-color);
-    color: var(--text-color);
-    border: 1px solid var(--line-color);
-    border-radius: 6px;
-    outline: none;
-  }
-  
-  .number-input:hover {
-    border-color: var(--line-color);
-  }
-  
-  .number-input:focus {
-    border-color: var(--accent-color);
-  }
+  width: 100%;
+  box-sizing: border-box;
+  padding: 6px 8px;
+  background: var(--darker-background-color);
+  color: var(--text-color);
+  border: 1px solid var(--line-color);
+  border-radius: 6px;
+  outline: none;
+}
+
+.number-input:hover {
+  border-color: var(--line-color);
+}
+
+.number-input:focus {
+  border-color: var(--accent-color);
+}

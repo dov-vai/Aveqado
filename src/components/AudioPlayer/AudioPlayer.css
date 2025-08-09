@@ -1,77 +1,76 @@
 .audio-player {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 
 .time-container {
-    display: flex;
-    flex-direction: row;
-    width: 100%;
-    justify-content: space-between;
-    font-size: 10pt;
-
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  justify-content: space-between;
+  font-size: 10pt;
 }
 
 .seek-bar-container {
-    width: 100%;
+  width: 100%;
 }
 
 .seek-bar {
-    width: 100%;
-    background-color: var(--darker-background-color);
-    -webkit-appearance: none;
-    appearance: none;
+  width: 100%;
+  background-color: var(--darker-background-color);
+  -webkit-appearance: none;
+  appearance: none;
 }
 
-input[type=range]::-webkit-slider-runnable-track {
-    height: 5px;
-    background: var(--line-color);
-    border: none;
-    border-radius: 3px;
+input[type='range']::-webkit-slider-runnable-track {
+  height: 5px;
+  background: var(--line-color);
+  border: none;
+  border-radius: 3px;
 }
 
-input[type=range]::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    border: none;
-    height: 16px;
-    width: 16px;
-    border-radius: 50%;
-    background: var(--accent-color);
-    margin-top: -5px;
+input[type='range']::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  border: none;
+  height: 16px;
+  width: 16px;
+  border-radius: 50%;
+  background: var(--accent-color);
+  margin-top: -5px;
 }
 
-input[type=range]:focus {
-    outline: none;
+input[type='range']:focus {
+  outline: none;
 }
 
-input[type=range]:focus::-webkit-slider-runnable-track {
-    background: var(--line-color);
+input[type='range']:focus::-webkit-slider-runnable-track {
+  background: var(--line-color);
 }
 
-input[type=range]::-moz-range-track {
-    height: 5px;
-    background: var(--line-color);
-    border: none;
-    border-radius: 3px;
+input[type='range']::-moz-range-track {
+  height: 5px;
+  background: var(--line-color);
+  border: none;
+  border-radius: 3px;
 }
 
-input[type=range]::-moz-range-thumb {
-    border: none;
-    height: 16px;
-    width: 16px;
-    border-radius: 50%;
-    background: var(--accent-color);
+input[type='range']::-moz-range-thumb {
+  border: none;
+  height: 16px;
+  width: 16px;
+  border-radius: 50%;
+  background: var(--accent-color);
 }
 
-input[type=range]:focus::-moz-range-track {
-    background: var(--line-color);
+input[type='range']:focus::-moz-range-track {
+  background: var(--line-color);
 }
 
 .audio-controls {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-evenly;
-    width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+  width: 100%;
 }

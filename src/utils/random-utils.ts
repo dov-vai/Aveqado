@@ -1,8 +1,7 @@
 export class RandomUtils {
-    private constructor() {
-    }
+  private constructor() {}
 
-    static getRndInteger(min: number, max: number): number {
-        return Math.floor(Math.random() * (max - min)) + min;
-    }
+  static getRndInteger(min: number, max: number): number {
+    return Math.floor(Math.random() * (max - min)) + min;
+  }
 }

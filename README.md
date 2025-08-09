@@ -12,6 +12,7 @@
 </p>
 
 # Features
+
 Identify and visualize audio frequencies. Mostly intended for EQ training.
 
 - Randomly generated bell filters
@@ -29,16 +30,19 @@ pnpm run build
 Built project will be in `dist/` folder.
 
 To run in development mode (Vite):
+
 ```bash
 pnpm run dev
 ```
 
 # Contributing
+
 Contributions are always appreciated.
 
 Feel free to open an issue if you have a suggestion.
 
 # LICENSE
+
 GNU General Public License 3.0 or later.
 
 See [LICENSE](LICENSE) for the full text.
