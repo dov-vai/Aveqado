@@ -2,11 +2,16 @@ import './App.css'
 import {ConfigProvider} from "./components/Providers/ConfigProvider.tsx";
 import {Config} from "./utils/config.ts";
 import Home from "./components/Home/Home.tsx";
+import Resonance from "./components/Resonance/Resonance.tsx";
+import {Routes, Route} from "react-router-dom";
 
 function App() {
     return (
         <ConfigProvider config={new Config()}>
-            <Home/>
+            <Routes>
+                <Route path="/" element={<Home/>} />
+                <Route path="/resonance" element={<Resonance/>} />
+            </Routes>
         </ConfigProvider>
     )
 }

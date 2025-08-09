@@ -22,6 +22,7 @@
     width: 100%;
     background-color: var(--darker-background-color);
     -webkit-appearance: none;
+    appearance: none;
 }
 
 input[type=range]::-webkit-slider-runnable-track {

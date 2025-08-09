@@ -2,15 +2,17 @@ import {useEffect, useMemo, useRef, useState} from "react";
 import {FilterGenerator} from "../../utils/filter-generator.ts";
 import {Filter} from "../EQGraph/filter.ts";
 import EqSelection from "../EqSelection/EqSelection.tsx";
-import {ArrowBigRight, X} from "lucide-react";
+import {ArrowBigRight, Activity, X} from "lucide-react";
 import AudioPlayer from "../AudioPlayer/AudioPlayer.tsx";
 import AudioFileSelector from "../AudioPlayer/AudioFileSelector.tsx";
 import SampleAudioSelector from "../SampleAudioSelector/SampleAudioSelector.tsx";
 import DifficultySelection from "../DifficultySelection/DifficultySelection.tsx";
 import {useConfig} from "../Providers/ConfigProvider.tsx";
 import {ConfigKey} from "../../utils/config.ts";
+import {useNavigate} from "react-router-dom";
 
 function Home() {
+    const navigate = useNavigate();
     const config = useConfig();
     const [width, setWidth] = useState(1280);
     const [height, setHeight] = useState(800);
@@ -105,6 +107,12 @@ function Home() {
                     </div>
                 </div>
                 <div className="sidebar">
+                    <div className="card">
+                        <div className="round-button"
+                             onClick={() => navigate('/resonance')}>
+                            <Activity/>
+                        </div>
+                    </div>
                     <div className="card">
                         <div className="round-button"
                              onClick={() => handleSubmit()}>
