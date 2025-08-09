@@ -16,3 +16,11 @@
 .number-input:focus {
   border-color: var(--accent-color);
 }
+
+.resonance-controls {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}

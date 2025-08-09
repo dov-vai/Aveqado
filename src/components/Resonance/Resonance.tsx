@@ -7,6 +7,7 @@ import SampleAudioSelector from '../SampleAudioSelector/SampleAudioSelector.tsx'
 import { ArrowBigLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import ResonanceControls from '../ResonanceControls/ResonanceControls.tsx';
+import { defaultFilters } from '../ResonanceControls/constants.ts';
 
 function Resonance() {
   const minFreq = 20;
@@ -18,11 +19,7 @@ function Resonance() {
   const [height, setHeight] = useState(800);
   const canvasRef = useRef<HTMLDivElement | null>(null);
   const [audioFile, setAudioFile] = useState<File>();
-  const [filters, setFilters] = useState<Filter[]>([
-    { type: 'peaking', frequency: 3000, Q: 5, gain: -3 },
-    { type: 'peaking', frequency: 9000, Q: 5, gain: -2 },
-    { type: 'peaking', frequency: 15000, Q: 5, gain: -1 },
-  ]);
+  const [filters, setFilters] = useState<Filter[]>(defaultFilters);
 
   const handleFileSelected = (file: File) => {
     setAudioFile(file);

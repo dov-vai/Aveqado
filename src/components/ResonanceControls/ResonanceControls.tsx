@@ -1,8 +1,10 @@
+import { useState } from 'react';
 import { FileUtils } from '../../utils/file-utils';
 import { FilterExport } from '../../utils/filter-export';
 import { Filter } from '../EQGraph/filter';
 import './ResonanceControls.css';
-import { FileDown } from 'lucide-react';
+import { FileDown, RotateCcw } from 'lucide-react';
+import { defaultFilters } from './constants';
 
 interface Props {
   filters: Filter[];
@@ -18,6 +20,12 @@ export default function ResonanceControls({ filters, onChange }: Props) {
   const min = 2000;
   const max = 4000;
   const step = 10;
+  const [qInputs, setQInputs] = useState<string[]>(
+    filters.map((f) => f.Q.toString())
+  );
+  const [gainInputs, setGainInputs] = useState<string[]>(
+    filters.map((f) => f.gain.toString())
+  );
 
   const handleBaseChange = (hz: number) => {
     const freqs = [hz, hz * 3, hz * 5].map((f) => Math.round(f));
@@ -30,17 +38,28 @@ export default function ResonanceControls({ filters, onChange }: Props) {
     onChange(updated);
   };
 
-  const handleQChange = (i: number, qVal: number) => {
-    const q = isFinite(qVal) && qVal > 0 ? qVal : 5;
+  const handleQChange = (i: number, qValue: string) => {
+    setQInputs(qInputs.map((qInput, idx) => (idx === i ? qValue : qInput)));
+
+    const q = Number(qValue);
+    if (!isFinite(q) || q <= 0) return;
+
     const updated = filters.map((filter, idx) =>
       idx === i ? { ...filter, Q: q } : filter
     );
     onChange(updated);
   };
 
-  const handleGainChange = (i: number, dbVal: number) => {
+  const handleGainChange = (i: number, dbValue: string) => {
+    setGainInputs(
+      gainInputs.map((gainInput, idx) => (idx === i ? dbValue : gainInput))
+    );
+
+    const db = Number(dbValue);
+    if (!isFinite(db)) return;
+
     const updated = filters.map((f, idx) =>
-      idx === i ? { ...f, gain: dbVal } : f
+      idx === i ? { ...f, gain: db } : f
     );
     onChange(updated);
   };
@@ -52,12 +71,29 @@ export default function ResonanceControls({ filters, onChange }: Props) {
     );
   };
 
+  const onReset = () => {
+    onChange(defaultFilters);
+    setQInputs(defaultFilters.map((f) => f.Q.toString()));
+    setGainInputs(defaultFilters.map((f) => f.gain.toString()));
+  };
+
   return (
     <div style={{ display: 'grid', gap: 12 }}>
-      <div style={{ fontWeight: 600 }}>In-Ear Resonances</div>
+      <div className="resonance-controls">
+        <div style={{ fontWeight: 600 }}>In-Ear Resonances</div>
+        <div style={{ display: 'flex', gap: 8 }}>
+          <div className="round-button" onClick={onExport}>
+            <FileDown />
+          </div>
+          <div className="round-button" onClick={onReset}>
+            <RotateCcw />
+          </div>
+        </div>
+      </div>
 
       <label style={{ display: 'grid', gap: 8 }}>
         <div>Base frequency: {toKHzLabel(filters[0].frequency)}Hz</div>
+
         <input
           type="range"
           min={min}
@@ -82,11 +118,11 @@ export default function ResonanceControls({ filters, onChange }: Props) {
               <span>Q</span>
               <input
                 type="number"
-                min={0.1}
+                min={0}
                 step={0.1}
-                value={filter.Q}
+                value={qInputs[i]}
                 className="number-input"
-                onChange={(e) => handleQChange(i, Number(e.target.value))}
+                onChange={(e) => handleQChange(i, e.target.value)}
               />
             </label>
             <label style={{ display: 'grid', gap: 4 }}>
@@ -94,18 +130,14 @@ export default function ResonanceControls({ filters, onChange }: Props) {
               <input
                 type="number"
                 step={0.1}
-                value={filter.gain}
+                value={gainInputs[i]}
                 className="number-input"
-                onChange={(e) => handleGainChange(i, Number(e.target.value))}
+                onChange={(e) => handleGainChange(i, e.target.value)}
               />
             </label>
           </div>
         </div>
       ))}
-
-      <div className="round-button" onClick={onExport}>
-        <FileDown />
-      </div>
     </div>
   );
 }
