@@ -113,7 +113,7 @@ function AudioPlayer({ audioFile, filters }: AudioPlayerProps) {
       return;
     }
     connectNodes();
-  }, [JSON.stringify(filters), isFiltering, audioFile]);
+  }, [filters, isFiltering, audioFile]);
 
   const togglePlayPause = () => {
     if (!audioFile || !audioElementRef.current) return;

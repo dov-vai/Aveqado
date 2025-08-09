@@ -1,5 +1,5 @@
 import './App.css';
-import { ConfigProvider } from './components/Providers/ConfigProvider.tsx';
+import { ConfigProvider } from './context/ConfigContext/ConfigContext.tsx';
 import { Config } from './utils/config.ts';
 import Home from './components/Home/Home.tsx';
 import Resonance from './components/Resonance/Resonance.tsx';

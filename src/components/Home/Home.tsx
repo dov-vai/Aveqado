@@ -7,9 +7,9 @@ import AudioPlayer from '../AudioPlayer/AudioPlayer.tsx';
 import AudioFileSelector from '../AudioPlayer/AudioFileSelector.tsx';
 import SampleAudioSelector from '../SampleAudioSelector/SampleAudioSelector.tsx';
 import DifficultySelection from '../DifficultySelection/DifficultySelection.tsx';
-import { useConfig } from '../Providers/ConfigProvider.tsx';
 import { ConfigKey } from '../../utils/config.ts';
 import { useNavigate } from 'react-router-dom';
+import { useConfig } from '../../context/ConfigContext/useConfig.ts';
 
 function Home() {
   const navigate = useNavigate();

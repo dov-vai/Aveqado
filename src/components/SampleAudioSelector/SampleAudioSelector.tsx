@@ -26,8 +26,7 @@ function SampleAudioSelector({ onFileSelected }: SampleAudioSelectorProps) {
 
     try {
       const module = await audioModules[fullPath!]();
-
-      // @ts-ignore
+      // @ts-expect-error - module.default is a string
       const response = await fetch(module.default);
       if (!response.ok) {
         throw new Error(`Failed to load audio: ${response.statusText}`);

@@ -1,0 +1,9 @@
+pre-commit:
+  parallel: false
+  commands:
+    eslint:
+      glob: '*.{js,ts,jsx,tsx}'
+      run: pnpm exec eslint --max-warnings=0 --fix {staged_files}
+    prettier:
+      glob: '*.{ts,tsx,js,jsx,json,css,md,yml,yaml}'
+      run: pnpm exec prettier --write {staged_files}
