@@ -112,7 +112,7 @@ function Home() {
                         </div>
                     </div>
                     <div className="card">
-                        <AudioPlayer audioFile={audioFile} filter={filter}/>
+                        <AudioPlayer audioFile={audioFile} filters={[filter]}/>
                     </div>
                     <div className="card">
                         <AudioFileSelector onFileSelected={handleFileSelected}/>
